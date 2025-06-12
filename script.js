@@ -1,7 +1,8 @@
 // VARIABLES GLOBALES
 let matchInterval;
 let currentTime = 0;
-let addedTime = 0;
+let addedTimeToShow = 3; // Minutes additionnelles configurables
+let addedTimeCounter = 0;
 let inAddedTime = false;
 let goals = [];
 let events = [];
@@ -176,6 +177,9 @@ function launchPrediction() {
     const competition = document.getElementById('competition').value || 'Compétition';
     const team1 = document.getElementById('team1').value || 'Équipe 1';
     const team2 = document.getElementById('team2').value || 'Équipe 2';
+    
+    // Récupération du temps additionnel configuré
+    addedTimeToShow = parseInt(document.getElementById('addedTimeMinutes').value) || 3;
 
     // Récupération des prédictions
     targetCorners1 = parseInt(document.getElementById('predCorners1').value) || 0;
@@ -189,7 +193,7 @@ function launchPrediction() {
 
     // Reset des variables
     currentTime = 0;
-    addedTime = 0;
+    addedTimeCounter = 0;
     inAddedTime = false;
     currentScore1 = 0;
     currentScore2 = 0;
@@ -428,15 +432,18 @@ function createSimpleConfetti() {
     }
 }
 
-// MISE À JOUR DU MATCH
+// MISE À JOUR DU MATCH AVEC TEMPS ADDITIONNEL CONFIGURABLE
 function updateMatch() {
     if (!inAddedTime) {
         currentTime++;
         document.getElementById('matchTime').textContent = currentTime + "'";
         document.getElementById('progressFill').style.width = (currentTime / 90) * 100 + '%';
     } else {
-        addedTime++;
-        document.getElementById('addedTime').textContent = '+' + addedTime;
+        addedTimeCounter++;
+        // Le temps additionnel n'est affiché que pendant 5 secondes
+        if (addedTimeCounter <= 5) {
+            document.getElementById('addedTime').textContent = '+' + addedTimeToShow;
+        }
     }
 
     // Affichage du score mi-temps à la 45e minute
@@ -451,9 +458,9 @@ function updateMatch() {
     // Début du temps additionnel à 90 minutes
     if (currentTime === 90 && !inAddedTime) {
         inAddedTime = true;
-        addedTime = 0;
+        addedTimeCounter = 0;
         document.getElementById('addedTime').style.display = 'block';
-        document.getElementById('addedTime').textContent = '+0';
+        document.getElementById('addedTime').textContent = '+' + addedTimeToShow;
     }
 
     // Gestion des buts
@@ -515,9 +522,10 @@ function updateMatch() {
     });
 
     // Fin du match après 5 secondes de temps additionnel
-    if (inAddedTime && addedTime >= 5) {
+    if (inAddedTime && addedTimeCounter >= 5) {
         clearInterval(matchInterval);
         document.getElementById('matchTime').textContent = "FIN";
+        document.getElementById('addedTime').style.display = 'none';
         document.getElementById('progressFill').style.width = '100%';
     }
 }
