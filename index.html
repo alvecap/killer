@@ -122,7 +122,7 @@
             <button class="launch-btn" onclick="launchPrediction()">🚀 Lancer Football Killer Pro</button>
         </div>
 
-        <!-- ÉCRAN DE SIMULATION -->
+        <!-- ÉCRAN DE SIMULATION CORRIGÉ -->
         <div class="match-display" id="matchDisplay">
             <div class="competition-header" id="competitionDisplay">Ligue 1</div>
             
@@ -150,48 +150,52 @@
             <div class="statistics-table">
                 <div class="stats-header">📊 Statistiques Live</div>
                 <div class="stats-content">
-                    <div class="stats-section">
-                        <div class="team-stats-display">
+                    <div class="stats-grid-live">
+                        <div class="team-column">
                             <div class="team-stats-name" id="statsTeam1">Paris Saint-Germain</div>
-                            <div class="stat-item">
-                                <span class="stat-label">🚩 Corners</span>
-                                <span class="stat-value" id="corners1">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">🎯 Tirs Cadrés</span>
-                                <span class="stat-value" id="shots1">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">🟨 Cartons</span>
-                                <span class="stat-value" id="yellowCards1">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">⚠️ Fautes</span>
-                                <span class="stat-value" id="fouls1">0</span>
+                            <div class="stats-list">
+                                <div class="stat-item">
+                                    <span class="stat-label">🚩 Corners</span>
+                                    <span class="stat-value" id="corners1">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">🎯 Tirs Cadrés</span>
+                                    <span class="stat-value" id="shots1">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">🟨 Cartons</span>
+                                    <span class="stat-value" id="yellowCards1">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">⚠️ Fautes</span>
+                                    <span class="stat-value" id="fouls1">0</span>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="teams-separator">
+                        <div class="center-separator">
                             <div class="separator-line"></div>
                         </div>
                         
-                        <div class="team-stats-display">
+                        <div class="team-column">
                             <div class="team-stats-name" id="statsTeam2">Olympique de Marseille</div>
-                            <div class="stat-item">
-                                <span class="stat-label">🚩 Corners</span>
-                                <span class="stat-value" id="corners2">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">🎯 Tirs Cadrés</span>
-                                <span class="stat-value" id="shots2">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">🟨 Cartons</span>
-                                <span class="stat-value" id="yellowCards2">0</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">⚠️ Fautes</span>
-                                <span class="stat-value" id="fouls2">0</span>
+                            <div class="stats-list">
+                                <div class="stat-item">
+                                    <span class="stat-label">🚩 Corners</span>
+                                    <span class="stat-value" id="corners2">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">🎯 Tirs Cadrés</span>
+                                    <span class="stat-value" id="shots2">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">🟨 Cartons</span>
+                                    <span class="stat-value" id="yellowCards2">0</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">⚠️ Fautes</span>
+                                    <span class="stat-value" id="fouls2">0</span>
+                                </div>
                             </div>
                         </div>
                     </div>
