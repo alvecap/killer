@@ -1,8 +1,10 @@
 // VARIABLES GLOBALES
 let matchInterval;
+let countdownInterval;
 let currentTime = 0;
-let addedTimeToShow = 3; // Minutes additionnelles configurables
+let addedTimeToShow = 3;
 let addedTimeCounter = 0;
+let countdownSeconds = 5;
 let inAddedTime = false;
 let goals = [];
 let events = [];
@@ -194,6 +196,7 @@ function launchPrediction() {
     // Reset des variables
     currentTime = 0;
     addedTimeCounter = 0;
+    countdownSeconds = 5;
     inAddedTime = false;
     currentScore1 = 0;
     currentScore2 = 0;
@@ -227,6 +230,7 @@ function launchPrediction() {
     document.getElementById('displayScore2').textContent = '0';
     document.getElementById('matchTime').textContent = "0'";
     document.getElementById('addedTime').style.display = 'none';
+    document.getElementById('addedTimeCountdown').style.display = 'none';
     document.getElementById('progressFill').style.width = '0%';
     document.getElementById('halftimeScore').style.display = 'none';
     updateStats();
@@ -258,7 +262,7 @@ function generateGoals() {
     goals.sort((a, b) => a.minute - b.minute);
 }
 
-// GÉNÉRATION DES ÉVÉNEMENTS
+// GÉNÉRATION DES ÉVÉNEMENTS (CARTONS JAUNES PRÉCIS)
 function generateEvents() {
     events = [];
     
@@ -283,7 +287,7 @@ function generateEvents() {
     events.sort((a, b) => a.minute - b.minute);
 }
 
-// GÉNÉRATION DES ÉVÉNEMENTS PRÉDITS
+// GÉNÉRATION DES ÉVÉNEMENTS PRÉDITS (SANS CARTONS JAUNES AUTOMATIQUES)
 function generatePredictedEvents() {
     predictedEvents = [];
     
@@ -321,19 +325,22 @@ function generatePredictedEvents() {
         });
     }
     
-    // Distribution des cartons jaunes automatiques
+    // CARTONS JAUNES BASÉS UNIQUEMENT SUR LA PRÉDICTION (pas aléatoires)
+    // Distribution intelligente basée sur le nombre prédit
     for (let i = 0; i < targetYellowCards1; i++) {
+        const minute = Math.floor((i + 1) * (90 / (targetYellowCards1 + 1))) + Math.floor(Math.random() * 8) - 4;
         predictedEvents.push({
-            type: 'auto_yellow_card',
+            type: 'predicted_yellow_card',
             team: 1,
-            minute: Math.floor(Math.random() * 89) + 1
+            minute: Math.max(1, Math.min(89, minute))
         });
     }
     for (let i = 0; i < targetYellowCards2; i++) {
+        const minute = Math.floor((i + 1) * (90 / (targetYellowCards2 + 1))) + Math.floor(Math.random() * 8) - 4;
         predictedEvents.push({
-            type: 'auto_yellow_card',
+            type: 'predicted_yellow_card',
             team: 2,
-            minute: Math.floor(Math.random() * 89) + 1
+            minute: Math.max(1, Math.min(89, minute))
         });
     }
     
@@ -432,18 +439,34 @@ function createSimpleConfetti() {
     }
 }
 
-// MISE À JOUR DU MATCH AVEC TEMPS ADDITIONNEL CONFIGURABLE
+// FONCTION DE DÉCOMPTE TEMPS ADDITIONNEL
+function startAddedTimeCountdown() {
+    document.getElementById('addedTimeCountdown').style.display = 'flex';
+    document.getElementById('addedTimeCountdown').textContent = countdownSeconds;
+    
+    countdownInterval = setInterval(() => {
+        countdownSeconds--;
+        document.getElementById('addedTimeCountdown').textContent = countdownSeconds;
+        
+        if (countdownSeconds <= 0) {
+            clearInterval(countdownInterval);
+            document.getElementById('addedTimeCountdown').style.display = 'none';
+            document.getElementById('addedTime').style.display = 'none';
+            
+            // Fin du match
+            clearInterval(matchInterval);
+            document.getElementById('matchTime').textContent = "FIN";
+            document.getElementById('progressFill').style.width = '100%';
+        }
+    }, 1000);
+}
+
+// MISE À JOUR DU MATCH AVEC DÉCOMPTE
 function updateMatch() {
     if (!inAddedTime) {
         currentTime++;
         document.getElementById('matchTime').textContent = currentTime + "'";
         document.getElementById('progressFill').style.width = (currentTime / 90) * 100 + '%';
-    } else {
-        addedTimeCounter++;
-        // Le temps additionnel n'est affiché que pendant 5 secondes
-        if (addedTimeCounter <= 5) {
-            document.getElementById('addedTime').textContent = '+' + addedTimeToShow;
-        }
     }
 
     // Affichage du score mi-temps à la 45e minute
@@ -458,9 +481,9 @@ function updateMatch() {
     // Début du temps additionnel à 90 minutes
     if (currentTime === 90 && !inAddedTime) {
         inAddedTime = true;
-        addedTimeCounter = 0;
         document.getElementById('addedTime').style.display = 'block';
         document.getElementById('addedTime').textContent = '+' + addedTimeToShow;
+        startAddedTimeCountdown();
     }
 
     // Gestion des buts
@@ -479,7 +502,7 @@ function updateMatch() {
         }
     });
 
-    // Gestion des événements personnalisés
+    // Gestion des événements personnalisés (cartons jaunes précis)
     events.forEach(event => {
         if (event.minute === currentTime && !event.displayed) {
             switch(event.type) {
@@ -496,7 +519,7 @@ function updateMatch() {
         }
     });
 
-    // Gestion des événements automatiques
+    // Gestion des événements automatiques (SANS cartons jaunes aléatoires)
     predictedEvents.forEach(event => {
         if (event.minute === currentTime && !event.displayed) {
             switch(event.type) {
@@ -508,7 +531,8 @@ function updateMatch() {
                     if (event.team === 1) shots1++; else shots2++;
                     updateStats();
                     break;
-                case 'auto_yellow_card':
+                case 'predicted_yellow_card':
+                    // Cartons jaunes basés uniquement sur les prédictions
                     if (event.team === 1) yellowCards1++; else yellowCards2++;
                     updateStats();
                     break;
@@ -520,14 +544,6 @@ function updateMatch() {
             event.displayed = true;
         }
     });
-
-    // Fin du match après 5 secondes de temps additionnel
-    if (inAddedTime && addedTimeCounter >= 5) {
-        clearInterval(matchInterval);
-        document.getElementById('matchTime').textContent = "FIN";
-        document.getElementById('addedTime').style.display = 'none';
-        document.getElementById('progressFill').style.width = '100%';
-    }
 }
 
 // MISE À JOUR DES STATISTIQUES
@@ -547,6 +563,9 @@ function resetPrediction() {
     if (matchInterval) {
         clearInterval(matchInterval);
     }
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
     
     document.getElementById('predictionForm').style.display = 'block';
     document.getElementById('matchDisplay').style.display = 'none';
@@ -561,7 +580,7 @@ function initializeApp() {
     addGoal(1, 65);
     addGoal(2, 80);
 
-    // Événements par défaut
+    // Événements par défaut (cartons jaunes précis)
     addEvent('yellow', 1, 35);
     addEvent('substitution', 2, 60);
 }
