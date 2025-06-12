@@ -115,14 +115,14 @@
                 <div class="form-group">
                     <label for="addedTimeMinutes">Minutes additionnelles à afficher</label>
                     <input type="number" id="addedTimeMinutes" min="1" max="10" value="3" placeholder="Ex: 3 minutes">
-                    <small>Ce temps sera affiché pendant 5 secondes seulement</small>
+                    <small>Ce temps sera affiché pendant 5 secondes avec décompte</small>
                 </div>
             </div>
             
             <button class="launch-btn" onclick="launchPrediction()">🚀 Lancer Football Killer Pro</button>
         </div>
 
-        <!-- ÉCRAN DE SIMULATION CORRIGÉ -->
+        <!-- ÉCRAN DE SIMULATION -->
         <div class="match-display" id="matchDisplay">
             <div class="competition-header" id="competitionDisplay">Ligue 1</div>
             
@@ -135,6 +135,7 @@
                     <div class="match-time-container">
                         <div class="match-time" id="matchTime">0'</div>
                         <div class="added-time" id="addedTime">+0</div>
+                        <div class="added-time-countdown" id="addedTimeCountdown">5</div>
                         <div class="halftime-score" id="halftimeScore">MI-TEMPS: 0-0</div>
                     </div>
                     <div class="team">
